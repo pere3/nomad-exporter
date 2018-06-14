@@ -1,4 +1,4 @@
-package main // import "github.com/Nomon/nomad-exporter"
+package main
 
 import (
 	"flag"
@@ -249,29 +249,29 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			}
 			for taskName, taskStats := range stats.Tasks {
 				ch <- prometheus.MustNewConstMetric(
-					taskCPUPercent, prometheus.GaugeValue, taskStats.ResourceUsage.CpuStats.Percent, *alloc.Job.Name, alloc.TaskGroup, alloc.Name, taskName, *alloc.Job.Region, node.Datacenter, node.Name,
+					taskCPUPercent, prometheus.GaugeValue, taskStats.ResourceUsage.CpuStats.Percent, alloc.Job.Name, alloc.TaskGroup, alloc.Name, taskName, alloc.Job.Region, node.Datacenter, node.Name,
 				)
 				ch <- prometheus.MustNewConstMetric(
-					taskCPUTotalTicks, prometheus.GaugeValue, taskStats.ResourceUsage.CpuStats.TotalTicks, *alloc.Job.Name, alloc.TaskGroup, alloc.Name, taskName, *alloc.Job.Region, node.Datacenter, node.Name,
+					taskCPUTotalTicks, prometheus.GaugeValue, taskStats.ResourceUsage.CpuStats.TotalTicks, alloc.Job.Name, alloc.TaskGroup, alloc.Name, taskName, alloc.Job.Region, node.Datacenter, node.Name,
 				)
 				ch <- prometheus.MustNewConstMetric(
-					taskMemoryRssBytes, prometheus.GaugeValue, float64(taskStats.ResourceUsage.MemoryStats.RSS), *alloc.Job.Name, alloc.TaskGroup, alloc.Name, taskName, *alloc.Job.Region, node.Datacenter, node.Name,
+					taskMemoryRssBytes, prometheus.GaugeValue, float64(taskStats.ResourceUsage.MemoryStats.RSS), alloc.Job.Name, alloc.TaskGroup, alloc.Name, taskName, alloc.Job.Region, node.Datacenter, node.Name,
 				)
 			}
 			ch <- prometheus.MustNewConstMetric(
-				allocationCPU, prometheus.GaugeValue, stats.ResourceUsage.CpuStats.Percent, *alloc.Job.Name, alloc.TaskGroup, alloc.Name, *alloc.Job.Region, node.Datacenter, node.Name,
+				allocationCPU, prometheus.GaugeValue, stats.ResourceUsage.CpuStats.Percent, alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 			ch <- prometheus.MustNewConstMetric(
-				allocationCPUThrottled, prometheus.GaugeValue, float64(stats.ResourceUsage.CpuStats.ThrottledTime), *alloc.Job.Name, alloc.TaskGroup, alloc.Name, *alloc.Job.Region, node.Datacenter, node.Name,
+				allocationCPUThrottled, prometheus.GaugeValue, float64(stats.ResourceUsage.CpuStats.ThrottledTime), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 			ch <- prometheus.MustNewConstMetric(
-				allocationMemory, prometheus.GaugeValue, float64(stats.ResourceUsage.MemoryStats.RSS), *alloc.Job.Name, alloc.TaskGroup, alloc.Name, *alloc.Job.Region, node.Datacenter, node.Name,
+				allocationMemory, prometheus.GaugeValue, float64(stats.ResourceUsage.MemoryStats.RSS), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 			ch <- prometheus.MustNewConstMetric(
-				allocationMemoryLimit, prometheus.GaugeValue, float64(*alloc.Resources.MemoryMB), *alloc.Job.Name, alloc.TaskGroup, alloc.Name, *alloc.Job.Region, node.Datacenter, node.Name,
+				allocationMemoryLimit, prometheus.GaugeValue, float64(alloc.Resources.MemoryMB), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 			ch <- prometheus.MustNewConstMetric(
-				allocationCPULimit, prometheus.GaugeValue, float64(*alloc.Resources.CPU), *alloc.Job.Name, alloc.TaskGroup, alloc.Name, *alloc.Job.Region, node.Datacenter, node.Name,
+				allocationCPULimit, prometheus.GaugeValue, float64(alloc.Resources.CPU), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 		}(a)
 	}
@@ -299,12 +299,12 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 				var allocatedCPU, allocatedMemory int
 				for _, alloc := range runningAllocs {
-					allocatedCPU += *alloc.Resources.CPU
-					allocatedMemory += *alloc.Resources.MemoryMB
+					allocatedCPU += alloc.Resources.CPU
+					allocatedMemory += alloc.Resources.MemoryMB
 				}
 
 				ch <- prometheus.MustNewConstMetric(
-					nodeResourceMemory, prometheus.GaugeValue, float64(*node.Resources.MemoryMB), node.Name, node.Datacenter,
+					nodeResourceMemory, prometheus.GaugeValue, float64(node.Resources.MemoryMB), node.Name, node.Datacenter,
 				)
 				ch <- prometheus.MustNewConstMetric(
 					nodeAllocatedMemory, prometheus.GaugeValue, float64(allocatedMemory), node.Name, node.Datacenter,
@@ -313,7 +313,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 					nodeUsedMemory, prometheus.GaugeValue, float64(nodeStats.Memory.Used/1024/1024), node.Name, node.Datacenter,
 				)
 				ch <- prometheus.MustNewConstMetric(
-					nodeResourceCPU, prometheus.GaugeValue, float64(*node.Resources.CPU), node.Name, node.Datacenter,
+					nodeResourceCPU, prometheus.GaugeValue, float64(node.Resources.CPU), node.Name, node.Datacenter,
 				)
 				ch <- prometheus.MustNewConstMetric(
 					nodeAllocatedCPU, prometheus.GaugeValue, float64(allocatedCPU), node.Name, node.Datacenter,

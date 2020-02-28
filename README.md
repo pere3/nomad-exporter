@@ -25,6 +25,7 @@
 | nomad_node_resource_memory_megabytes | Amount of allocatable memory the node has in MB | node, datacenter |
 | nomad_node_allocated_memory_megabytes | Amount of  memory allocated to tasks on the node in MB | node, datacenter |
 | nomad_node_used_memory_megabytes | Amount of memory used on the node in MB | node, datacenter |
+| nomad_node_reserved_memory_megabytes | Amount of memory reserved on the node in MB | node, datacenter |
 | nomad_node_resource_cpu_megahertz | Amount of allocatable CPU the node has in MHz | node, datacenter |
 | nomad_node_allocated_cpu_megahertz | Amount of allocated CPU the node has | node, datacenter | 
 | nomad_node_used_cpu_megahertz | Amount of CPU used on the node | node, datacenter |

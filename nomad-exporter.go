@@ -107,6 +107,11 @@ var (
 		"Amount of memory used on the node in MB",
 		[]string{"node", "datacenter"}, nil,
 	)
+	nodeReservedMemory = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "node_reserved_memory_megabytes"),
+		"Amount of memory reserved on the node in MB",
+		[]string{"node", "datacenter"}, nil,
+	)
 	nodeResourceCPU = prometheus.NewDesc(
 		prometheus.BuildFQName(namespace, "", "node_resource_cpu_megahertz"),
 		"Amount of allocatable CPU the node has in MHz",
@@ -167,6 +172,7 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- nodeResourceMemory
 	ch <- nodeAllocatedMemory
 	ch <- nodeUsedMemory
+	ch <- nodeReservedMemory
 	ch <- nodeResourceCPU
 	ch <- nodeAllocatedCPU
 	ch <- nodeUsedCPU
@@ -305,6 +311,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 
 				ch <- prometheus.MustNewConstMetric(
 					nodeResourceMemory, prometheus.GaugeValue, float64(node.Resources.MemoryMB), node.Name, node.Datacenter,
+				)
+				ch <- prometheus.MustNewConstMetric(
+					nodeReservedMemory, prometheus.GaugeValue, float64(node.Reserved.MemoryMB), node.Name, node.Datacenter,
 				)
 				ch <- prometheus.MustNewConstMetric(
 					nodeAllocatedMemory, prometheus.GaugeValue, float64(allocatedMemory), node.Name, node.Datacenter,

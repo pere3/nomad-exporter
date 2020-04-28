@@ -61,6 +61,7 @@ func NewExporter(cfg *api.Config) (*Exporter, error) {
 func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 	ch <- up
 	ch <- allocationMemoryLimit
+	ch <- allocationCPULimit
 }
 
 // Collect collects nomad metrics
@@ -94,6 +95,9 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 			}
 			ch <- prometheus.MustNewConstMetric(
 				allocationMemoryLimit, prometheus.GaugeValue, float64(alloc.Resources.MemoryMB), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.ID, alloc.Job.Region, node.Datacenter, node.Name,
+			)
+			ch <- prometheus.MustNewConstMetric(
+				allocationCPULimit, prometheus.GaugeValue, float64(alloc.Resources.CPU), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.ID, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 		}(a)
 	}

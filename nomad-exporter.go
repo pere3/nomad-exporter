@@ -31,6 +31,11 @@ var (
 		"Allocation memory limit",
 		[]string{"job", "group", "alloc", "alloc_id", "region", "datacenter", "node"}, nil,
 	)
+	allocationCPULimit = prometheus.NewDesc(
+		prometheus.BuildFQName(namespace, "", "allocation_cpu_limit"),
+		"Allocation CPU limit",
+		[]string{"job", "group", "alloc", "alloc_id", "region", "datacenter", "node"}, nil,
+	)
 )
 
 func AllocationsByStatus(allocs []*api.AllocationListStub, status string) []*api.AllocationListStub {

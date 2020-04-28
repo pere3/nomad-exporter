@@ -4,7 +4,6 @@ import (
 	"flag"
 	"fmt"
 	"log"
-	"math"
 	"net/http"
 	"os"
 	"strconv"
@@ -66,14 +65,6 @@ func (e *Exporter) Describe(ch chan<- *prometheus.Desc) {
 
 // Collect collects nomad metrics
 func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
-	peers, err := e.client.Status().Peers()
-	if err != nil {
-		ch <- prometheus.MustNewConstMetric(
-			up, prometheus.GaugeValue, 0,
-		)
-		logError(err)
-		return
-	}
 	ch <- prometheus.MustNewConstMetric(
 		up, prometheus.GaugeValue, 1,
 	)
@@ -95,12 +86,7 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 				logError(err)
 				return
 			}
-
-			stats, err := e.client.Allocations().Stats(alloc, &api.QueryOptions{})
-			if err != nil {
-				logError(err)
-				return
-			}
+			
 			node, _, err := e.client.Nodes().Info(alloc.NodeID, &api.QueryOptions{})
 			if err != nil {
 				logError(err)

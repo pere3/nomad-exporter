@@ -93,15 +93,34 @@ func (e *Exporter) Collect(ch chan<- prometheus.Metric) {
 				return
 			}
 			
+			node, _, err := e.client.Nodes().Info(alloc.NodeID, &api.QueryOptions{})
+			if err != nil {
+				logError(err)
+				return
+			}
 			ch <- prometheus.MustNewConstMetric(
-				allocationMemoryLimit, prometheus.GaugeValue, float64(alloc.Resources.MemoryMB), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.ID, alloc.Job.Region,
+				allocationMemoryLimit, prometheus.GaugeValue, float64(alloc.Resources.MemoryMB), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.ID, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 			ch <- prometheus.MustNewConstMetric(
-				allocationCPULimit, prometheus.GaugeValue, float64(alloc.Resources.CPU), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.ID, alloc.Job.Region,
+				allocationCPULimit, prometheus.GaugeValue, float64(alloc.Resources.CPU), alloc.Job.Name, alloc.TaskGroup, alloc.Name, alloc.ID, alloc.Job.Region, node.Datacenter, node.Name,
 			)
 		}(a)
 	}
 	w.Wait()
+}
+
+func getRunningAllocs(client *api.Client, nodeID string) ([]*api.Allocation, error) {
+	var allocs []*api.Allocation
+
+	// Query the node allocations
+	nodeAllocs, _, err := client.Nodes().Allocations(nodeID, nil)
+	// Filter list to only running allocations
+	for _, alloc := range nodeAllocs {
+		if alloc.ClientStatus == "running" {
+			allocs = append(allocs, alloc)
+		}
+	}
+	return allocs, err
 }
 
 func main() {
